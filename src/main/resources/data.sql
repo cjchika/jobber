@@ -22,18 +22,18 @@ WHERE NOT EXISTS (SELECT 1 FROM companies WHERE id = '123e4567-e89b-12d3-a456-42
 CREATE TABLE IF NOT EXISTS users
 (
     id UUID PRIMARY KEY,
-    full_name VARCHAR(100)        NOT NULL,
+    fullName VARCHAR(100)        NOT NULL,
     email VARCHAR(100) UNIQUE     NOT NULL,
-    password_hash TEXT            NOT NULL,
+    password TEXT            NOT NULL,
     role VARCHAR(20) CHECK (role IN ('JOB_SEEKER', 'EMPLOYER', 'ADMIN')) NOT NULL,
-    company_id UUID               NULL,
+    companyId UUID               NULL,
     created_at TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
+    FOREIGN KEY (companyId) REFERENCES companies(id) ON DELETE SET NULL
 );
 
 -- Insert two well-known UUIDs for specific users if they do not already exist
-INSERT INTO users (id, full_name, email, password_hash, role, company_id, created_at, updated_at)
+INSERT INTO users (id, fullName, email, password, role, companyId, created_at, updated_at)
 SELECT '123e4567-e89b-12d3-a456-426614174000',
        'John Doe',
        'john.doe@example.com',
@@ -44,7 +44,7 @@ SELECT '123e4567-e89b-12d3-a456-426614174000',
        '2024-01-10 12:00:00'  -- Example updated_at timestamp
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE id = '123e4567-e89b-12d3-a456-426614174000');
 
-INSERT INTO users (id, full_name, email, password_hash, role, company_id, created_at, updated_at)
+INSERT INTO users (id, full_name, email, password, role, companyId, created_at, updated_at)
 SELECT '123e4567-e89b-12d3-a456-426614174001',
        'Jane Smith',
        'jane.smith@example.com',

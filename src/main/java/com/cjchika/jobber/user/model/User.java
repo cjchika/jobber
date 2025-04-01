@@ -15,7 +15,7 @@ public class User {
     private UUID id;
 
     @NotNull
-    private String full_name;
+    private String fullName;
 
     @NotNull
     @Email
@@ -23,14 +23,14 @@ public class User {
     private String email;
 
     @NotNull
-    private String password_hash;
+    private String password;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "company_id")
-    private UUID company_Id;
+    @Column(name = "companyId")
+    private UUID companyId;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -55,12 +55,12 @@ public class User {
         this.id = id;
     }
 
-    public String getFull_name() {
-        return full_name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -71,12 +71,12 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword_hash() {
-        return password_hash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPassword_hash(String password_hash) {
-        this.password_hash = password_hash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Role getRole() {
@@ -87,12 +87,12 @@ public class User {
         this.role = role;
     }
 
-    public UUID getCompany_Id() {
-        return company_Id;
+    public UUID getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany_Id(UUID company_Id) {
-        this.company_Id = company_Id;
+    public void setCompanyId(UUID companyId) {
+        this.companyId = companyId;
     }
 
     public LocalDateTime getCreatedAt() {
