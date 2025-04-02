@@ -1,7 +1,9 @@
 package com.cjchika.jobber.user.controller;
 
+import com.cjchika.jobber.user.api.ApiResponse;
 import com.cjchika.jobber.user.dto.UserResponseDTO;
 import com.cjchika.jobber.user.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +21,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getUsers(){
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<ApiResponse<List<UserResponseDTO>>> getUsers(){
         List<UserResponseDTO> users = userService.getUsers();
-        return ResponseEntity.ok().body(users);
+        return ApiResponse.success(users, "Users retrieved successfully", HttpStatus.OK);
     }
 }
