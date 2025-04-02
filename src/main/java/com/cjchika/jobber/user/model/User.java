@@ -12,7 +12,7 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @NotNull
@@ -20,7 +20,7 @@ public class User {
 
     @NotNull
     @Email
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
     @NotNull

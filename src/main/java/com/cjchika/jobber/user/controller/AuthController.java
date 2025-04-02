@@ -6,6 +6,7 @@ import com.cjchika.jobber.user.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +26,11 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @PostMapping
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRequestDTO userRequestDTO){
+//        System.out.println(userRequestDTO.toString());
         UserResponseDTO newUserResponseDTO = authService.register(userRequestDTO);
-        // LOGIC
+
         return ResponseEntity.created(URI.create(baseUrl+newUserResponseDTO.getId())).body(newUserResponseDTO);
     }
 

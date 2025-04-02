@@ -21,8 +21,8 @@ public class UserMapper {
         User user = new User();
 
         user.setFullName(userRequestDTO.getFullName());
-        user.setEmail(user.getEmail());
-        user.setPassword(user.getPassword());
+        user.setEmail(userRequestDTO.getEmail());
+        user.setPassword(userRequestDTO.getPassword());
         user.setRole(userRequestDTO.getRole());
         user.setCompanyId(userRequestDTO.getCompanyId());
 

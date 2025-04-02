@@ -2,19 +2,20 @@ package com.cjchika.jobber.user.dto;
 
 import com.cjchika.jobber.user.enums.Role;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 public class UserRequestDTO {
-    @NotNull(message = "Full name is required")
+    @NotBlank(message = "Full name is required")
     private String fullName;
 
-    @NotNull(message = "Email is required")
+    @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
 
-    @NotNull(message = "Password is required")
+    @NotBlank(message = "Password is required")
     private String password;
 
     @NotNull(message = "Role is required")
@@ -60,5 +61,16 @@ public class UserRequestDTO {
 
     public void setCompanyId(UUID companyId) {
         this.companyId = companyId;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRequestDTO{" +
+                "fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", companyId=" + companyId +
+                '}';
     }
 }
