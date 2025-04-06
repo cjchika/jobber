@@ -14,7 +14,6 @@ public class JobberApplication {
 				System.setProperty(entry.getKey(), entry.getValue())
 		);
 
-
 		SpringApplication.run(JobberApplication.class, args);
 
 	}

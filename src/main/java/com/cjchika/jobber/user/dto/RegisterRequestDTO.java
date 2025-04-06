@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
-public class UserRequestDTO {
+public class RegisterRequestDTO {
     @NotBlank(message = "Full name is required")
     private String fullName;
 

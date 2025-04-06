@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS users
     full_name VARCHAR(100)        NOT NULL,
     email VARCHAR(100) UNIQUE     NOT NULL,
     password TEXT            NOT NULL,
-    role VARCHAR(20) CHECK (role IN ('JOB_SEEKER', 'EMPLOYER', 'ADMIN')) NOT NULL,
+    role VARCHAR(20) CHECK (role IN ('USER', 'EMPLOYER', 'ADMIN')) NOT NULL,
     company_id UUID               NULL,
     created_at TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
@@ -38,7 +38,7 @@ SELECT '123e4567-e89b-12d3-a456-426614174000',
        'John Doe',
        'john.doe@example.com',
        'hashed_password_1',  -- Replace with an actual hashed password
-       'JOB_SEEKER',
+       'USER',
        NULL,
        '2024-01-10 12:00:00', -- Example created_at timestamp
        '2024-01-10 12:00:00'  -- Example updated_at timestamp
