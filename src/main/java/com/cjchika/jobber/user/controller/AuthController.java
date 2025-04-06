@@ -28,7 +28,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping(produces = "application/json")
+    @PostMapping(name = "/register", produces = "application/json")
     @Operation(
             summary = "Create a new user",
             description = "This endpoint creates a new user by any of these roles - 'JOB_SEEKER', 'EMPLOYER', 'ADMIN' ")
