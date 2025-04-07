@@ -1,6 +1,8 @@
 package com.cjchika.jobber.user.dto;
 
+//import com.cjchika.jobber.company.dto.CompanyDTO;
 import com.cjchika.jobber.user.enums.Role;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +26,39 @@ public class RegisterRequestDTO {
     private Role role;
 
     private UUID companyId;
+
+    @Valid
+    private CompanyDTO company;
+
+    public static class CompanyDTO {
+        private String name;
+        private String website;
+        private String description;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getWebsite() {
+            return website;
+        }
+
+        public void setWebsite(String website) {
+            this.website = website;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+    }
 
     public String getEmail() {
         return email;
@@ -63,6 +98,14 @@ public class RegisterRequestDTO {
 
     public void setCompanyId(UUID companyId) {
         this.companyId = companyId;
+    }
+
+    public CompanyDTO getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyDTO company) {
+        this.company = company;
     }
 
     @Override

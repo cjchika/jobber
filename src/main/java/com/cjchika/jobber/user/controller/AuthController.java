@@ -33,7 +33,7 @@ public class AuthController {
     @PostMapping(value = "/register", produces = "application/json")
     @Operation(
             summary = "Create a new user",
-            description = "This endpoint creates a new user by any of these roles - 'JOB_SEEKER', 'EMPLOYER', 'ADMIN' ")
+            description = "This endpoint creates a new user by any of these roles - 'USER', 'EMPLOYER', 'ADMIN' ")
     public ResponseEntity<ApiResponse<UserResponseDTO>> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO){
 
         UserResponseDTO newUserResponseDTO = authService.register(registerRequestDTO);

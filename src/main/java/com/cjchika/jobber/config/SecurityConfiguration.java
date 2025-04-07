@@ -3,6 +3,7 @@ package com.cjchika.jobber.config;
 import com.cjchika.jobber.user.exception.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,7 +42,11 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/jobs/**").permitAll()
                         .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "EMPLOYER")
+                        .requestMatchers(HttpMethod.POST, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

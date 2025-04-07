@@ -1,13 +1,13 @@
 package com.cjchika.jobber.company.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Table(name = "companies")
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
