@@ -30,23 +30,23 @@ public class UserController {
     }
 
     @GetMapping(produces = "application/json")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get all users", description = "This endpoint retrieves all users from the system")
     public ResponseEntity<ApiResponse<List<UserResponseDTO>>> getUsers(){
         List<UserResponseDTO> users = userService.getUsers();
         return ApiResponse.success(users, "Users retrieved successfully", HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}", produces = "application/json")
-    @PreAuthorize("hasRole('ADMIN') or #userId == principal.id")
+    @GetMapping(value = "/{userId}", produces = "application/json")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == principal.id")
     @Operation(summary = "Get a user", description = "This endpoint retrieves a user from the system")
     public ResponseEntity<ApiResponse<UserResponseDTO>> getUser(@PathVariable UUID userId){
         UserResponseDTO user = userService.getUser(userId);
         return ApiResponse.success(user, "User retrieved successfully", HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/{id}", produces = "application/json")
-    @PreAuthorize("hasRole('ADMIN') or #userId == principal.id")
+    @PatchMapping(value = "/{userId}", produces = "application/json")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == principal.id")
     @Operation(
             summary = "Update user",
             description = "This endpoint updates an existing user.")
@@ -57,8 +57,8 @@ public class UserController {
         return ApiResponse.success(newUserResponseDTO, "User updated successfully", HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}", produces = "application/json")
-    @PreAuthorize("hasRole('ADMIN') or #userId == principal.id")
+    @DeleteMapping(value = "/{userId}", produces = "application/json")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == principal.id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(
             summary = "Delete user",
