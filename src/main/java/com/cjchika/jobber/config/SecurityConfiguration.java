@@ -42,8 +42,9 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/jobs/**").permitAll()
-                        .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "EMPLOYER")
+//                        .requestMatchers("/api/users/**").permitAll()
+//                        .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
+//                        .requestMatchers("/api/jobs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
                         .requestMatchers(HttpMethod.PATCH, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
                         .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")

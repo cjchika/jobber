@@ -1,7 +1,7 @@
 package com.cjchika.jobber.user.mapper;
 
 import com.cjchika.jobber.user.dto.LoginResponseDTO;
-import com.cjchika.jobber.user.dto.RegisterRequestDTO;
+import com.cjchika.jobber.user.dto.UserRequestDTO;
 import com.cjchika.jobber.user.dto.UserResponseDTO;
 import com.cjchika.jobber.user.model.User;
 import com.cjchika.jobber.user.service.JwtService;
@@ -30,14 +30,14 @@ public class UserMapper {
         return  userResponseDTO;
     }
 
-    public User toModel(RegisterRequestDTO registerRequestDTO){
+    public User toModel(UserRequestDTO userRequestDTO){
         User user = new User();
 
-        user.setFullName(registerRequestDTO.getFullName());
-        user.setEmail(registerRequestDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
-        user.setRole(registerRequestDTO.getRole());
-        user.setCompanyId(registerRequestDTO.getCompanyId());
+        user.setFullName(userRequestDTO.getFullName());
+        user.setEmail(userRequestDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+        user.setRole(userRequestDTO.getRole());
+        user.setCompanyId(userRequestDTO.getCompanyId());
 
         return user;
     }
@@ -54,5 +54,13 @@ public class UserMapper {
         loginResponseDTO.setExpiresIn(jwtService.getExpirationTime());
 
         return  loginResponseDTO;
+    }
+
+    public void updateModel(UserRequestDTO dto, User user){
+        user.setFullName(dto.getFullName());
+        user.setEmail(dto.getEmail());
+        user.setRole(dto.getRole());
+        user.setCompanyId(dto.getCompanyId());
+
     }
 }

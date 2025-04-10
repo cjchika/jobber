@@ -4,7 +4,7 @@ import com.cjchika.jobber.company.model.Company;
 import com.cjchika.jobber.company.repository.CompanyRepository;
 import com.cjchika.jobber.user.dto.LoginRequestDTO;
 import com.cjchika.jobber.user.dto.LoginResponseDTO;
-import com.cjchika.jobber.user.dto.RegisterRequestDTO;
+import com.cjchika.jobber.user.dto.UserRequestDTO;
 import com.cjchika.jobber.user.dto.UserResponseDTO;
 import com.cjchika.jobber.user.enums.Role;
 import com.cjchika.jobber.user.exception.UserException;
@@ -35,32 +35,32 @@ public class AuthService {
         this.userMapper = userMapper;
     }
 
-    public UserResponseDTO register(RegisterRequestDTO registerRequestDTO){
+    public UserResponseDTO register(UserRequestDTO userRequestDTO){
         //  Check if email exists
-        if(userRepository.existsByEmail(registerRequestDTO.getEmail())){
-           throw new UserException("Email already exists " + registerRequestDTO.getEmail(), HttpStatus.BAD_REQUEST);
+        if(userRepository.existsByEmail(userRequestDTO.getEmail())){
+           throw new UserException("Email already exists " + userRequestDTO.getEmail(), HttpStatus.BAD_REQUEST);
         }
 
         // Handle EMPLOYER role specifically
-        if(registerRequestDTO.getRole() == Role.EMPLOYER){
-            handleEmployerRegistration(registerRequestDTO);
+        if(userRequestDTO.getRole() == Role.EMPLOYER){
+            handleEmployerRegistration(userRequestDTO);
         }
 
-        User newUser = userRepository.save(userMapper.toModel(registerRequestDTO));
+        User newUser = userRepository.save(userMapper.toModel(userRequestDTO));
         return userMapper.toDTO(newUser);
     }
 
-    private void handleEmployerRegistration(RegisterRequestDTO registerRequestDTO) {
+    private void handleEmployerRegistration(UserRequestDTO userRequestDTO) {
         // Case A: Joining existing company
-        if(registerRequestDTO.getCompanyId() != null){
+        if(userRequestDTO.getCompanyId() != null){
             // Verify company exists
-            companyRepository.findById(registerRequestDTO.getCompanyId())
-                    .orElseThrow(() -> new UserException("Company not found with id " + registerRequestDTO.getCompanyId(), HttpStatus.BAD_REQUEST));
+            companyRepository.findById(userRequestDTO.getCompanyId())
+                    .orElseThrow(() -> new UserException("Company not found with id " + userRequestDTO.getCompanyId(), HttpStatus.BAD_REQUEST));
         }
 
         // Case B: Creating new company
-        if(registerRequestDTO.getCompany() != null){
-            RegisterRequestDTO.CompanyDTO companyDTO = registerRequestDTO.getCompany();
+        if(userRequestDTO.getCompany() != null){
+            UserRequestDTO.CompanyDTO companyDTO = userRequestDTO.getCompany();
 
             // Check if company already exists by name or website
             if(companyRepository.existsByName(companyDTO.getName())){
@@ -78,7 +78,7 @@ public class AuthService {
             newCompany.setDescription(companyDTO.getDescription());
 
             Company savedCompany = companyRepository.save(newCompany);
-            registerRequestDTO.setCompanyId(savedCompany.getId());
+            userRequestDTO.setCompanyId(savedCompany.getId());
         } else {
             // Neither companyId nor company details provided
             throw new UserException("Employers must belong to a company", HttpStatus.BAD_REQUEST);

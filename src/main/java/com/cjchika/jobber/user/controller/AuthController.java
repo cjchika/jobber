@@ -3,7 +3,7 @@ package com.cjchika.jobber.user.controller;
 import com.cjchika.jobber.user.api.ApiResponse;
 import com.cjchika.jobber.user.dto.LoginRequestDTO;
 import com.cjchika.jobber.user.dto.LoginResponseDTO;
-import com.cjchika.jobber.user.dto.RegisterRequestDTO;
+import com.cjchika.jobber.user.dto.UserRequestDTO;
 import com.cjchika.jobber.user.dto.UserResponseDTO;
 import com.cjchika.jobber.user.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,10 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,10 +30,10 @@ public class AuthController {
     @PostMapping(value = "/register", produces = "application/json")
     @Operation(
             summary = "Create a new user",
-            description = "This endpoint creates a new user by any of these roles - 'USER', 'EMPLOYER', 'ADMIN', If user role is Employer, include companyId assuming they're joining existing company or full company details i.e. name, description and website, otherwise leave out company for other roles.")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO){
+            description = "This endpoint creates a new user by any of these roles - 'USER', 'EMPLOYER', 'ADMIN', If user role is Employer, include companyId assuming they're joining existing company or full company details i.e. name, description and website - this way, you're creating a user alongside a company, otherwise leave out company details for other roles.")
+    public ResponseEntity<ApiResponse<UserResponseDTO>> register(@Valid @RequestBody UserRequestDTO userRequestDTO){
 
-        UserResponseDTO newUserResponseDTO = authService.register(registerRequestDTO);
+        UserResponseDTO newUserResponseDTO = authService.register(userRequestDTO);
         String location = baseUrl + newUserResponseDTO.getId();
 
         return ApiResponse.created(newUserResponseDTO, "User created successfully", location);
