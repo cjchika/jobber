@@ -1,4 +1,4 @@
-package com.cjchika.jobber.user.api;
+package com.cjchika.jobber.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

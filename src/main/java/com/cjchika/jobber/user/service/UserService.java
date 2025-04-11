@@ -2,8 +2,9 @@ package com.cjchika.jobber.user.service;
 
 import com.cjchika.jobber.user.dto.UserRequestDTO;
 import com.cjchika.jobber.user.dto.UserResponseDTO;
+import com.cjchika.jobber.user.dto.UserUpdateDTO;
 import com.cjchika.jobber.user.enums.Role;
-import com.cjchika.jobber.user.exception.UserException;
+import com.cjchika.jobber.exception.JobberException;
 import com.cjchika.jobber.user.mapper.UserMapper;
 import com.cjchika.jobber.user.model.User;
 import com.cjchika.jobber.user.repository.UserRepository;
@@ -27,7 +28,7 @@ public class UserService {
 
     public UserResponseDTO getUser(UUID userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new JobberException("User not found", HttpStatus.NOT_FOUND));
 
         return userMapper.toDTO(user);
     }
@@ -37,34 +38,61 @@ public class UserService {
         return users.stream().map(user -> userMapper.toDTO(user)).toList();
     }
 
-    public UserResponseDTO updateUser(UserRequestDTO userRequestDTO, UUID userId){
+    public UserResponseDTO updateUser(UserUpdateDTO userUpdateDTO, UUID userId){
         // 1. Find the existing user by ID
         User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new JobberException("User not found", HttpStatus.NOT_FOUND));
 
-        // 2. Check if email is being changed to one that's already taken by another user
-        if(!existingUser.getEmail().equals(userRequestDTO.getEmail()) && userRepository.existsByEmail(userRequestDTO.getEmail())){
-            throw new UserException("Email already in use", HttpStatus.BAD_REQUEST);
-        }
+        // 2. Validate role-specific rules
+        validateRoleSpecificUpdates(existingUser, userUpdateDTO);
 
-        // 3. Update the existing user with new data
-        userMapper.updateModel(userRequestDTO, existingUser);
+        // 3. Create safe copy of updates
+        UserRequestDTO safeUpdates = createSafeUpdateDTO(existingUser, userUpdateDTO);
 
-        // 4. Save the updated user
+        // 4. Apply updates
+        userMapper.updateModel(safeUpdates, existingUser);
+
+        // 4. Save
         User updatedUser = userRepository.save(existingUser);
 
         return userMapper.toDTO(updatedUser);
     }
 
+    private void validateRoleSpecificUpdates(User existingUser, UserUpdateDTO updates){
+        // Prevent non-employers from setting companyId
+        if(!existingUser.getRole().equals(Role.EMPLOYER)){
+            if(updates.getCompanyId() != null){
+                throw new JobberException("Only employers can have company association", HttpStatus.FORBIDDEN);
+            }
+        }
 
-    public Boolean deleteUser(UUID userId){
+        // Prevent employers from removing their companyId
+        if(existingUser.getRole().equals(Role.EMPLOYER) && existingUser.getCompanyId() !=  null && updates.getCompanyId() == null){
+            throw new JobberException("Employers cannot remove company association", HttpStatus.FORBIDDEN);
+        }
+    }
+
+    private UserRequestDTO createSafeUpdateDTO(User existingUser, UserUpdateDTO input) {
+        UserRequestDTO safeDTO = new UserRequestDTO();
+        safeDTO.setFullName(input.getFullName());
+
+        // Only allow companyId updates for employers
+        if(existingUser.getRole().equals(Role.EMPLOYER)){
+            safeDTO.setCompanyId(input.getCompanyId());
+        }
+
+        return safeDTO;
+    }
+
+
+    public void deleteUser(UUID userId){
         // 1. FIND USER
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new JobberException("User not found", HttpStatus.NOT_FOUND));
 
         // 2. CHECK IF USER IS AN ADMIN
         if(user.getRole().equals(Role.ADMIN)){
-            throw new UserException("Contact super admin to perform this action", HttpStatus.FORBIDDEN);
+            throw new JobberException("Contact super admin to perform this action", HttpStatus.FORBIDDEN);
         }
 
         // 3. HANDLE RELATED ENTITIES
@@ -75,8 +103,6 @@ public class UserService {
         userRepository.delete(user);
 
         // 6. SEND NOTIFICATION
-
-        return true;
     }
 
 }

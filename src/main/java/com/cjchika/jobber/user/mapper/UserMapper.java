@@ -57,10 +57,9 @@ public class UserMapper {
     }
 
     public void updateModel(UserRequestDTO dto, User user){
-        user.setFullName(dto.getFullName());
-        user.setEmail(dto.getEmail());
-        user.setRole(dto.getRole());
+        if(dto.getFullName() != null && !dto.getFullName().isBlank()){
+            user.setFullName(dto.getFullName());
+        }
         user.setCompanyId(dto.getCompanyId());
-
     }
 }

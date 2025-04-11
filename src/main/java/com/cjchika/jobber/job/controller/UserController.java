@@ -1,9 +1,8 @@
-package com.cjchika.jobber.user.controller;
+package com.cjchika.jobber.job.controller;
 
 import com.cjchika.jobber.api.ApiResponse;
-import com.cjchika.jobber.user.dto.UserResponseDTO;
-import com.cjchika.jobber.user.dto.UserUpdateDTO;
-import com.cjchika.jobber.user.service.UserService;
+import com.cjchika.jobber.job.dto.JobResponseDTO;
+import com.cjchika.jobber.job.service.JobService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,25 +22,25 @@ public class UserController {
 
     @Value("${jobber.baseUrl}")
     private String baseUrl;
-    private UserService userService;
+    private JobService userService;
 
-    public UserController(UserService userService){
+    public UserController(JobService userService){
         this.userService = userService;
     }
 
     @GetMapping(produces = "application/json")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get all users", description = "This endpoint retrieves all users from the system")
-    public ResponseEntity<ApiResponse<List<UserResponseDTO>>> getUsers(){
-        List<UserResponseDTO> users = userService.getUsers();
+    public ResponseEntity<ApiResponse<List<JobResponseDTO>>> getUsers(){
+        List<JobResponseDTO> users = userService.getUsers();
         return ApiResponse.success(users, "Users retrieved successfully", HttpStatus.OK);
     }
 
     @GetMapping(value = "/{userId}", produces = "application/json")
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == principal.id")
     @Operation(summary = "Get a user", description = "This endpoint retrieves a user from the system")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> getUser(@PathVariable UUID userId){
-        UserResponseDTO user = userService.getUser(userId);
+    public ResponseEntity<ApiResponse<JobResponseDTO>> getUser(@PathVariable UUID userId){
+        JobResponseDTO user = userService.getUser(userId);
         return ApiResponse.success(user, "User retrieved successfully", HttpStatus.OK);
     }
 
@@ -50,9 +49,9 @@ public class UserController {
     @Operation(
             summary = "Update user",
             description = "This endpoint updates an existing user.")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO, @PathVariable UUID userId){
+    public ResponseEntity<ApiResponse<JobResponseDTO>> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO, @PathVariable UUID userId){
 
-        UserResponseDTO newUserResponseDTO = userService.updateUser(userUpdateDTO, userId);
+        JobResponseDTO newUserResponseDTO = userService.updateUser(userUpdateDTO, userId);
 
         return ApiResponse.success(newUserResponseDTO, "User updated successfully", HttpStatus.OK);
     }

@@ -1,11 +1,11 @@
-package com.cjchika.jobber.user.exception;
+package com.cjchika.jobber.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class UserException extends RuntimeException{
+public class JobberException extends RuntimeException{
     private final HttpStatus status;
 
-    public UserException(String message, HttpStatus status){
+    public JobberException(String message, HttpStatus status){
         super(message);
         this.status = status;
     }

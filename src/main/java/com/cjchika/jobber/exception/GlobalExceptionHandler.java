@@ -1,6 +1,6 @@
-package com.cjchika.jobber.user.exception;
+package com.cjchika.jobber.exception;
 
-import com.cjchika.jobber.user.api.ApiResponse;
+import com.cjchika.jobber.api.ApiResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +35,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUserException(UserException ex){
+    @ExceptionHandler(JobberException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserException(JobberException ex){
         log.warn("An error occurred {}", ex.getMessage());
         return ApiResponse.error(ex.getMessage(), ex.getStatus());
     }

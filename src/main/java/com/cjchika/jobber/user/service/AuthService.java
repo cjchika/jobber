@@ -7,7 +7,7 @@ import com.cjchika.jobber.user.dto.LoginResponseDTO;
 import com.cjchika.jobber.user.dto.UserRequestDTO;
 import com.cjchika.jobber.user.dto.UserResponseDTO;
 import com.cjchika.jobber.user.enums.Role;
-import com.cjchika.jobber.user.exception.UserException;
+import com.cjchika.jobber.exception.JobberException;
 import com.cjchika.jobber.user.mapper.UserMapper;
 import com.cjchika.jobber.user.model.User;
 import com.cjchika.jobber.user.repository.UserRepository;
@@ -38,7 +38,7 @@ public class AuthService {
     public UserResponseDTO register(UserRequestDTO userRequestDTO){
         //  Check if email exists
         if(userRepository.existsByEmail(userRequestDTO.getEmail())){
-           throw new UserException("Email already exists " + userRequestDTO.getEmail(), HttpStatus.BAD_REQUEST);
+           throw new JobberException("Email already exists " + userRequestDTO.getEmail(), HttpStatus.BAD_REQUEST);
         }
 
         // Handle EMPLOYER role specifically
@@ -55,7 +55,7 @@ public class AuthService {
         if(userRequestDTO.getCompanyId() != null){
             // Verify company exists
             companyRepository.findById(userRequestDTO.getCompanyId())
-                    .orElseThrow(() -> new UserException("Company not found with id " + userRequestDTO.getCompanyId(), HttpStatus.BAD_REQUEST));
+                    .orElseThrow(() -> new JobberException("Company not found with id " + userRequestDTO.getCompanyId(), HttpStatus.BAD_REQUEST));
         }
 
         // Case B: Creating new company
@@ -64,11 +64,11 @@ public class AuthService {
 
             // Check if company already exists by name or website
             if(companyRepository.existsByName(companyDTO.getName())){
-                throw new UserException("Company with this name already exists ", HttpStatus.BAD_REQUEST);
+                throw new JobberException("Company with this name already exists ", HttpStatus.BAD_REQUEST);
             }
 
             if(companyRepository.existsByWebsite(companyDTO.getWebsite())){
-                throw new UserException("Company with this website already exists ", HttpStatus.BAD_REQUEST);
+                throw new JobberException("Company with this website already exists ", HttpStatus.BAD_REQUEST);
             }
 
             // Create new company
@@ -81,7 +81,7 @@ public class AuthService {
             userRequestDTO.setCompanyId(savedCompany.getId());
         } else {
             // Neither companyId nor company details provided
-            throw new UserException("Employers must belong to a company", HttpStatus.BAD_REQUEST);
+            throw new JobberException("Employers must belong to a company", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -91,7 +91,7 @@ public class AuthService {
         );
 
        User user = userRepository.findByEmail(loginRequestDTO.getEmail())
-               .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
+               .orElseThrow(() -> new JobberException("User not found", HttpStatus.NOT_FOUND));
 
         return userMapper.toLoginResponseDTO(user);
     }
