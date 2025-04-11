@@ -5,6 +5,7 @@ import com.cjchika.jobber.user.dto.UserResponseDTO;
 import com.cjchika.jobber.user.dto.UserUpdateDTO;
 import com.cjchika.jobber.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,7 @@ public class UserController {
 
     @GetMapping(produces = "application/json")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Get all users", description = "This endpoint retrieves all users from the system")
     public ResponseEntity<ApiResponse<List<UserResponseDTO>>> getUsers(){
         List<UserResponseDTO> users = userService.getUsers();
@@ -39,6 +41,7 @@ public class UserController {
 
     @GetMapping(value = "/{userId}", produces = "application/json")
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == principal.id")
+    @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Get a user", description = "This endpoint retrieves a user from the system")
     public ResponseEntity<ApiResponse<UserResponseDTO>> getUser(@PathVariable UUID userId){
         UserResponseDTO user = userService.getUser(userId);
@@ -47,6 +50,7 @@ public class UserController {
 
     @PutMapping(value = "/{userId}", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == principal.id")
+    @SecurityRequirement(name = "Authorization")
     @Operation(
             summary = "Update user",
             description = "This endpoint updates an existing user.")
@@ -59,6 +63,7 @@ public class UserController {
 
     @DeleteMapping(value = "/{userId}", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == principal.id")
+    @SecurityRequirement(name = "Authorization")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(
             summary = "Delete user",

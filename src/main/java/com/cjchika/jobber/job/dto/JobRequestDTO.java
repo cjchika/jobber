@@ -2,8 +2,10 @@ package com.cjchika.jobber.job.dto;
 
 import com.cjchika.jobber.job.enums.JobType;
 import com.cjchika.jobber.job.enums.Status;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
 
@@ -14,20 +16,24 @@ public class JobRequestDTO {
     @NotBlank(message = "Description is required")
     private String description;
 
-    @NotBlank(message = "Salary Minimum is required")
+    @NotNull(message = "Salary Minimum is required")
+    @DecimalMin(value = "0.0", message = "Salary must be positive")
     private Double salaryMin;
 
-    @NotBlank(message = "Salary Maximum is required")
+    @NotNull(message = "Salary Maximum is required")
     private Double salaryMax;
 
     @NotBlank(message = "Location is required")
     private String location;
 
     @NotNull(message = "Job Type is required")
+//    @Pattern(regexp = "FULL_TIME|PART_TIME|CONTRACT|INTERNSHIP",
+//            flags = Pattern.Flag.CASE_INSENSITIVE,
+//            message = "Invalid job type")
+//    private String jobTypeString;
     private JobType jobType;
 
-    @NotNull(message = "Job Status is required")
-    private Status jobStatus;
+    private Status status;
 
     @NotNull(message = "Employer Id is required")
     private UUID employerId;
@@ -48,12 +54,12 @@ public class JobRequestDTO {
         this.employerId = employerId;
     }
 
-    public Status getJobStatus() {
-        return jobStatus;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setJobStatus(Status jobStatus) {
-        this.jobStatus = jobStatus;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public JobType getJobType() {
@@ -105,7 +111,7 @@ public class JobRequestDTO {
                 ", salaryMax=" + salaryMax +
                 ", location='" + location + '\'' +
                 ", jobType=" + jobType +
-                ", jobStatus=" + jobStatus +
+                ", status=" + status +
                 ", employerId=" + employerId +
                 '}';
     }

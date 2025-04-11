@@ -47,7 +47,7 @@ public class SecurityConfiguration {
 
 //                        .requestMatchers("/api/users/**").permitAll()
 //                        .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
-//                        .requestMatchers("/api/jobs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
 //                        .requestMatchers(HttpMethod.PATCH, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
 //                        .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")

@@ -3,6 +3,7 @@ package com.cjchika.jobber.job.service;
 import com.cjchika.jobber.job.dto.JobRequestDTO;
 import com.cjchika.jobber.job.dto.JobResponseDTO;
 import com.cjchika.jobber.exception.JobberException;
+import com.cjchika.jobber.job.dto.JobUpdateDTO;
 import com.cjchika.jobber.job.mapper.JobMapper;
 import com.cjchika.jobber.job.model.Job;
 import com.cjchika.jobber.job.repository.JobRepository;
@@ -30,7 +31,6 @@ public class JobService {
 
     public JobResponseDTO postJob(JobRequestDTO jobRequestDTO){
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(currentUser.toString());
 
         // 1. Verify the authenticated user matches employer in request
         if(!jobRequestDTO.getEmployerId().equals(currentUser.getId())){
@@ -43,6 +43,10 @@ public class JobService {
 
          if(!employer.getRole().equals(Role.EMPLOYER)){
              throw new JobberException("Only employers can post jobs", HttpStatus.FORBIDDEN);
+         }
+
+         if(jobRequestDTO.getSalaryMin() > jobRequestDTO.getSalaryMax()){
+             throw new JobberException("Minimum salary cannot exceed maximum salary", HttpStatus.BAD_REQUEST);
          }
 
          // 3. Create and save job
@@ -62,15 +66,36 @@ public class JobService {
         return jobs.stream().map(user -> JobMapper.toDTO(user)).toList();
     }
 
-    public JobResponseDTO updateJob(JobRequestDTO jobUpdateDTO, UUID jobId){
+    public JobResponseDTO updateJob(JobUpdateDTO jobUpdateDTO, UUID jobId){
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+//        System.out.println(currentUser.getId());
+//        System.out.println(jobUpdateDTO.toString());
+//        System.out.println(jobId);
         // 1. Find the existing user by ID
         Job existingJob = jobRepository.findById(jobId)
                 .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));
 
-        // 4. Save
+        System.out.println(existingJob.toString());
+
+        // 2. Verify the authenticated user owns the job
+        if(!existingJob.getEmployerId().equals(currentUser.getId())){
+            throw new JobberException("Unauthorized Access!", HttpStatus.FORBIDDEN);
+        }
+
+        // 3. Apply update only to non-null fields
+        JobMapper.updateModel(jobUpdateDTO, existingJob);
+
+        // 4. Validate the updated entity before saving
+        if (existingJob.getSalaryMin() != null && existingJob.getSalaryMax() != null
+                && existingJob.getSalaryMin() > existingJob.getSalaryMax()) {
+            throw new JobberException("Minimum salary cannot exceed maximum salary", HttpStatus.BAD_REQUEST);
+        }
+
+        // 5. Save
         Job updatedJob = jobRepository.save(existingJob);
 
-        return JobMapper.toDTO(existingJob);
+        return JobMapper.toDTO(updatedJob);
     }
 
     public void deleteJob(UUID jobId){

@@ -1,6 +1,5 @@
 package com.cjchika.jobber.user.dto;
 
-//import com.cjchika.jobber.company.dto.CompanyDTO;
 import com.cjchika.jobber.user.enums.Role;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
