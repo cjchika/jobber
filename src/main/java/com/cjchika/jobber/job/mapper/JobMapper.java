@@ -6,57 +6,44 @@ import com.cjchika.jobber.job.model.Job;
 import com.cjchika.jobber.job.service.JobService;
 import org.springframework.stereotype.Component;
 
-@Component
 public class JobMapper {
 
-    private JobService jobService;
 
-    public JobMapper(JobService jobService){
-        this.jobService = jobService;
-    }
-
-    public JobResponseDTO toDTO(Job job){
+    public static JobResponseDTO toDTO(Job job){
         JobResponseDTO jobResponseDTO = new JobResponseDTO();
 
         jobResponseDTO.setId(job.getId().toString());
-        jobResponseDTO.s(job.getTitle());
-        jobResponseDTO.setEmail(job.getDescription());
-        jobResponseDTO.setRole(job.getLocation());
-        jobResponseDTO.setCompanyId(job.getCompanyId());
+        jobResponseDTO.setTitle(job.getTitle());
+        jobResponseDTO.setDescription(job.getDescription());
+        jobResponseDTO.setLocation(job.getLocation());
+        jobResponseDTO.setSalaryMin(job.getSalaryMin());
+        jobResponseDTO.setSalaryMax(job.getSalaryMax());
+        jobResponseDTO.setJobType(job.getJobType());
+        jobResponseDTO.setStatus(job.getStatus());
+        jobResponseDTO.setEmployerId(job.getEmployerId());
 
-        return  userResponseDTO;
+        return  jobResponseDTO;
     }
 
-    public Job toModel(JobRequestDTO jobRequestDTO){
-        Job user = new Job();
+    public static Job toModel(JobRequestDTO jobRequestDTO){
+        Job job = new Job();
 
-        user.setFullName(jobRequestDTO.getFullName());
-        user.setEmail(jobRequestDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(jobRequestDTO.getPassword()));
-        user.setRole(jobRequestDTO.getRole());
-        user.setCompanyId(jobRequestDTO.getCompanyId());
+        job.setTitle(jobRequestDTO.getTitle());
+        job.setDescription(jobRequestDTO.getDescription());
+        job.setLocation(jobRequestDTO.getLocation());
+        job.setJobType(jobRequestDTO.getJobType());
+        job.setSalaryMin(jobRequestDTO.getSalaryMin());
+        job.setSalaryMax(jobRequestDTO.getSalaryMax());
+        job.setStatus(jobRequestDTO.getJobStatus());
+        job.setEmployerId(jobRequestDTO.getEmployerId());
 
-        return user;
+        return job;
     }
 
-    public LoginResponseDTO toLoginResponseDTO(Job user){
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-
-        loginResponseDTO.setId(user.getId().toString());
-        loginResponseDTO.setFullName(user.getFullName());
-        loginResponseDTO.setEmail(user.getEmail());
-        loginResponseDTO.setRole(user.getRole());
-        loginResponseDTO.setCompanyId(user.getCompanyId());
-        loginResponseDTO.setToken(jwtService.generateToken(user));
-        loginResponseDTO.setExpiresIn(jwtService.getExpirationTime());
-
-        return  loginResponseDTO;
-    }
-
-    public void updateModel(JobRequestDTO dto, Job user){
-        if(dto.getFullName() != null && !dto.getFullName().isBlank()){
-            user.setFullName(dto.getFullName());
-        }
-        user.setCompanyId(dto.getCompanyId());
-    }
+//    public void updateModel(JobRequestDTO dto, Job user){
+//        if(dto.getFullName() != null && !dto.getFullName().isBlank()){
+//            user.setFullName(dto.getFullName());
+//        }
+//        user.setCompanyId(dto.getCompanyId());
+//    }
 }

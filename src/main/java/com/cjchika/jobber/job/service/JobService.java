@@ -1,12 +1,17 @@
 package com.cjchika.jobber.job.service;
 
+import com.cjchika.jobber.job.dto.JobRequestDTO;
 import com.cjchika.jobber.job.dto.JobResponseDTO;
 import com.cjchika.jobber.exception.JobberException;
 import com.cjchika.jobber.job.mapper.JobMapper;
 import com.cjchika.jobber.job.model.Job;
 import com.cjchika.jobber.job.repository.JobRepository;
+import com.cjchika.jobber.user.enums.Role;
+import com.cjchika.jobber.user.model.User;
+import com.cjchika.jobber.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,63 +21,78 @@ import java.util.UUID;
 @Service
 public class JobService {
     private final JobRepository jobRepository;
-    private final JobMapper jobMapper;
+    private final UserRepository userRepository;
 
-    public JobService(JobRepository jobRepository, JobMapper jobMapper){
+    public JobService(JobRepository jobRepository, UserRepository userRepository){
         this.jobRepository = jobRepository;
-        this.jobMapper = jobMapper;
+        this.userRepository = userRepository;
     }
 
-    public JobResponseDTO getUser(UUID userId){
-        Job user = jobRepository.findById(userId)
-                .orElseThrow(() -> new JobberException("User not found", HttpStatus.NOT_FOUND));
+    public JobResponseDTO postJob(JobRequestDTO jobRequestDTO){
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(currentUser.toString());
 
-        return jobMapper.toDTO(user);
-    }
-
-    public List<JobResponseDTO> getUsers(){
-        List<Job> users = jobRepository.findAll();
-        return users.stream().map(user -> jobMapper.toDTO(user)).toList();
-    }
-
-    public JobResponseDTO updateUser(UserUpdateDTO userUpdateDTO, UUID userId){
-        // 1. Find the existing user by ID
-        Job existingUser = jobRepository.findById(userId)
-                .orElseThrow(() -> new JobberException("User not found", HttpStatus.NOT_FOUND));
-
-        // 2. Validate role-specific rules
-//        validateRoleSpecificUpdates(existingUser, userUpdateDTO);
-
-        // 3. Create safe copy of updates
-//        UserRequestDTO safeUpdates = createSafeUpdateDTO(existingUser, userUpdateDTO);
-
-        // 4. Apply updates
-        jobMapper.updateModel(userUpdateDTO, existingUser);
-
-        // 4. Save
-        Job updatedUser = jobRepository.save(existingUser);
-
-        return jobMapper.toDTO(updatedUser);
-    }
-
-    public void deleteUser(UUID userId){
-        // 1. FIND USER
-        Job user = jobRepository.findById(userId)
-                .orElseThrow(() -> new JobberException("User not found", HttpStatus.NOT_FOUND));
-
-        // 2. CHECK IF USER IS AN ADMIN
-        if(user.getRole().equals(Role.ADMIN)){
-            throw new JobberException("Contact super admin to perform this action", HttpStatus.FORBIDDEN);
+        // 1. Verify the authenticated user matches employer in request
+        if(!jobRequestDTO.getEmployerId().equals(currentUser.getId())){
+            throw new JobberException("Unauthorized", HttpStatus.FORBIDDEN);
         }
 
-        // 3. HANDLE RELATED ENTITIES
+        // 2. Find and validate employer
+         User employer = userRepository.findById(jobRequestDTO.getEmployerId())
+                    .orElseThrow(() -> new JobberException("Employer not found", HttpStatus.NOT_FOUND));
 
-        // 4. AUDIT LOG
+         if(!employer.getRole().equals(Role.EMPLOYER)){
+             throw new JobberException("Only employers can post jobs", HttpStatus.FORBIDDEN);
+         }
 
-        // 5. DELETE USER
-        jobRepository.delete(user);
-
-        // 6. SEND NOTIFICATION
+         // 3. Create and save job
+        Job newJob = jobRepository.save(JobMapper.toModel(jobRequestDTO));
+        return JobMapper.toDTO(newJob);
     }
 
+    public JobResponseDTO getJob(UUID jobId){
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));
+
+        return JobMapper.toDTO(job);
+    }
+
+    public List<JobResponseDTO> getJobs(){
+        List<Job> jobs = jobRepository.findAll();
+        return jobs.stream().map(user -> JobMapper.toDTO(user)).toList();
+    }
+
+    public JobResponseDTO updateJob(JobRequestDTO jobUpdateDTO, UUID jobId){
+        // 1. Find the existing user by ID
+        Job existingJob = jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));
+
+        // 4. Save
+        Job updatedJob = jobRepository.save(existingJob);
+
+        return JobMapper.toDTO(existingJob);
+    }
+
+    public void deleteJob(UUID jobId){
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // 1. FIND JOB
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));
+
+        // 2. Check if current user is allowed to  delete the job
+        boolean isAdmin = currentUser.getRole().equals(Role.ADMIN);
+        boolean isOwner = currentUser.getId().equals(job.getEmployerId());
+
+        if(!isAdmin && !isOwner){
+            throw new JobberException("Unauthorized", HttpStatus.FORBIDDEN);
+        }
+
+        // 2. HANDLE RELATED ENTITIES
+
+        // 3. AUDIT LOG
+
+        // 4. DELETE JOB
+        jobRepository.delete(job);
+    }
 }

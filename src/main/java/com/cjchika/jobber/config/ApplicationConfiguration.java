@@ -1,6 +1,6 @@
 package com.cjchika.jobber.config;
 
-import com.cjchika.jobber.user.exception.UserException;
+import com.cjchika.jobber.exception.JobberException;
 import com.cjchika.jobber.user.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ public class ApplicationConfiguration {
     @Bean
     UserDetailsService userDetailsService(){
         return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new JobberException("User not found", HttpStatus.NOT_FOUND));
     }
 
     @Bean

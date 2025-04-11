@@ -1,5 +1,6 @@
 package com.cjchika.jobber.job.model;
 
+import com.cjchika.jobber.job.enums.JobType;
 import com.cjchika.jobber.job.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +32,7 @@ public class Job {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private String jobType;
+    private JobType jobType;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -103,11 +104,11 @@ public class Job {
         this.location = location;
     }
 
-    public String getJobType() {
+    public JobType getJobType() {
         return jobType;
     }
 
-    public void setJobType(String jobType) {
+    public void setJobType(JobType jobType) {
         this.jobType = jobType;
     }
 

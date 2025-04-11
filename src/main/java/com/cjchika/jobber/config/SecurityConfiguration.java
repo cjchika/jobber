@@ -1,6 +1,6 @@
 package com.cjchika.jobber.config;
 
-import com.cjchika.jobber.user.exception.CustomAuthenticationEntryPoint;
+import com.cjchika.jobber.exception.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import com.cjchika.jobber.user.exception.CustomAccessDeniedHandler;
+import com.cjchika.jobber.exception.CustomAccessDeniedHandler;
 
 import java.util.List;
 
@@ -44,12 +44,13 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+
 //                        .requestMatchers("/api/users/**").permitAll()
 //                        .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
 //                        .requestMatchers("/api/jobs/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
-                        .requestMatchers(HttpMethod.PATCH, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
+//                        .requestMatchers(HttpMethod.POST, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
+//                        .requestMatchers(HttpMethod.PATCH, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

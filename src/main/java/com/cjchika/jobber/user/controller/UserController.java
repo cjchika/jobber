@@ -63,7 +63,7 @@ public class UserController {
     @Operation(
             summary = "Delete user",
             description = "This endpoint deletes a user.")
-    public void deleteUser(@Valid @RequestParam UUID userId){
+    public void deleteUser(@Valid @PathVariable UUID userId){
         userService.deleteUser(userId);
     }
 }
