@@ -9,11 +9,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class JobController {
     @Value("${jobber.baseUrl}")
     private String baseUrl;
     private JobService jobService;
+    private static final Logger logger = LoggerFactory.getLogger(JobController.class);
 
     public JobController(JobService jobService){
         this.jobService = jobService;
@@ -35,8 +37,15 @@ public class JobController {
     @GetMapping(produces = "application/json")
     @Operation(summary = "Get all jobs", description = "This endpoint retrieves all jobs from the system")
     public ResponseEntity<ApiResponse<List<JobResponseDTO>>> getJobs(){
-        List<JobResponseDTO> jobs = jobService.getJobs();
-        return ApiResponse.success(jobs, "Jobs retrieved successfully", HttpStatus.OK);
+        try {
+            logger.info("Fetching all jobs");
+            List<JobResponseDTO> jobs = jobService.getJobs();
+
+            return ApiResponse.success(jobs, "Jobs retrieved successfully", HttpStatus.OK);
+        } catch (Exception ex){
+            logger.error("An error occurred while fetching jobs: {}", ex.getMessage());
+            return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping(produces = "application/json")

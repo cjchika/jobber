@@ -76,8 +76,6 @@ public class JobService {
         Job existingJob = jobRepository.findById(jobId)
                 .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));
 
-        System.out.println(existingJob.toString());
-
         // 2. Verify the authenticated user owns the job
         if(!existingJob.getEmployerId().equals(currentUser.getId())){
             throw new JobberException("Unauthorized Access!", HttpStatus.FORBIDDEN);

@@ -1,7 +1,7 @@
 package com.cjchika.jobber.job.enums;
 
 public enum Status {
-    OPEN("OPEN"),
+    ACTIVE("ACTIVE"),
     CLOSED("CLOSED"),
     DRAFT("DRAFT");
 

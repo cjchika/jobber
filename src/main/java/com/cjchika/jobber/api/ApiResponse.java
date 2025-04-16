@@ -50,7 +50,7 @@ public class ApiResponse<T> {
                 .body(new ApiResponse<>(true, message, data));
     }
 
-    public static ResponseEntity<ApiResponse<Void>> error(String message, HttpStatus status) {
+    public static <T> ResponseEntity<ApiResponse<T>> error(String message, HttpStatus status) {
         return ResponseEntity.status(status)
                 .body(new ApiResponse<>(false, message, null));
     }
