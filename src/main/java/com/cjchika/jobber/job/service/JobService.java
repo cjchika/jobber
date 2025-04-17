@@ -1,5 +1,6 @@
 package com.cjchika.jobber.job.service;
 
+import com.cjchika.jobber.job.dto.JobFilterRequest;
 import com.cjchika.jobber.job.dto.JobRequestDTO;
 import com.cjchika.jobber.job.dto.JobResponseDTO;
 import com.cjchika.jobber.exception.JobberException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -61,17 +63,22 @@ public class JobService {
         return JobMapper.toDTO(job);
     }
 
-    public List<JobResponseDTO> getJobs(){
-        List<Job> jobs = jobRepository.findAll();
-        return jobs.stream().map(user -> JobMapper.toDTO(user)).toList();
+    public List<JobResponseDTO> getFilteredJobs(JobFilterRequest filters){
+        List<Job> jobs = jobRepository.findWithFilters(
+                filters.getTitle(),
+                filters.getMinSalary(),
+                filters.getMaxSalary(),
+                filters.getLocation(),
+                filters.getJobType(),
+                filters.getStatus()
+        );
+
+        return jobs.stream().map(JobMapper::toDTO).collect(Collectors.toList());
     }
 
     public JobResponseDTO updateJob(JobUpdateDTO jobUpdateDTO, UUID jobId){
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-//        System.out.println(currentUser.getId());
-//        System.out.println(jobUpdateDTO.toString());
-//        System.out.println(jobId);
+        
         // 1. Find the existing user by ID
         Job existingJob = jobRepository.findById(jobId)
                 .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));

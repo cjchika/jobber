@@ -1,9 +1,12 @@
 package com.cjchika.jobber.job.controller;
 
 import com.cjchika.jobber.api.ApiResponse;
+import com.cjchika.jobber.job.dto.JobFilterRequest;
 import com.cjchika.jobber.job.dto.JobRequestDTO;
 import com.cjchika.jobber.job.dto.JobResponseDTO;
 import com.cjchika.jobber.job.dto.JobUpdateDTO;
+import com.cjchika.jobber.job.enums.JobType;
+import com.cjchika.jobber.job.enums.Status;
 import com.cjchika.jobber.job.service.JobService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,13 +38,29 @@ public class JobController {
     }
 
     @GetMapping(produces = "application/json")
-    @Operation(summary = "Get all jobs", description = "This endpoint retrieves all jobs from the system")
-    public ResponseEntity<ApiResponse<List<JobResponseDTO>>> getJobs(){
+    @Operation(summary = "Get all jobs", description = "This endpoint retrieves jobs with optional filters")
+    public ResponseEntity<ApiResponse<List<JobResponseDTO>>> getFilteredJobs(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Double minSalary,
+            @RequestParam(required = false) Double maxSalary,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) JobType jobType,
+            @RequestParam(required = false) Status status
+    ){
         try {
-            logger.info("Fetching all jobs");
-            List<JobResponseDTO> jobs = jobService.getJobs();
+            logger.info("Fetching filtered jobs");
 
-            return ApiResponse.success(jobs, "Jobs retrieved successfully", HttpStatus.OK);
+            JobFilterRequest filters = new JobFilterRequest();
+            filters.setTitle(title);
+            filters.setMinSalary(minSalary);
+            filters.setMaxSalary(maxSalary);
+            filters.setLocation(location);
+            filters.setJobType(jobType);
+            filters.setStatus(status);
+
+            List<JobResponseDTO> jobs = jobService.getFilteredJobs(filters);
+
+            return ApiResponse.success(jobs, "Filtered jobs retrieved successfully", HttpStatus.OK);
         } catch (Exception ex){
             logger.error("An error occurred while fetching jobs: {}", ex.getMessage());
             return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -54,16 +73,29 @@ public class JobController {
     @Operation(summary = "Create job", description = "This endpoint creates a job.")
     public ResponseEntity<ApiResponse<JobResponseDTO>> postJob(@Valid @RequestBody JobRequestDTO jobRequestDTO){
 
-        JobResponseDTO newJobResponse = jobService.postJob(jobRequestDTO);
+        try {
+            logger.info("Creating job");
+            JobResponseDTO newJobResponse = jobService.postJob(jobRequestDTO);
 
-        return ApiResponse.success(newJobResponse, "Job created successfully", HttpStatus.CREATED);
+            return ApiResponse.success(newJobResponse, "Job created successfully", HttpStatus.CREATED);
+        } catch (Exception ex){
+            logger.error("An error occurred while creating jobs: {}", ex.getMessage());
+            return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping(value = "/{jobId}", produces = "application/json")
     @Operation(summary = "Get a job", description = "This endpoint retrieves a job from the system")
     public ResponseEntity<ApiResponse<JobResponseDTO>> getJob(@PathVariable UUID jobId){
-        JobResponseDTO job = jobService.getJob(jobId);
-        return ApiResponse.success(job, "Job retrieved successfully", HttpStatus.OK);
+        try {
+            logger.info("Getting job");
+            JobResponseDTO job = jobService.getJob(jobId);
+            return ApiResponse.success(job, "Job retrieved successfully", HttpStatus.OK);
+        } catch (Exception ex){
+            logger.error("An error occurred while getting job: {}", ex.getMessage());
+            return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping(value = "/{jobId}", produces = "application/json")
@@ -74,9 +106,15 @@ public class JobController {
             description = "This endpoint updates an existing job.")
     public ResponseEntity<ApiResponse<JobResponseDTO>> updateJob(@Valid @RequestBody JobUpdateDTO jobUpdateDTO, @PathVariable UUID jobId){
 
-        JobResponseDTO newJobResponseDTO = jobService.updateJob(jobUpdateDTO, jobId);
+        try {
+            logger.info("Updating a job");
+            JobResponseDTO newJobResponseDTO = jobService.updateJob(jobUpdateDTO, jobId);
 
-        return ApiResponse.success(newJobResponseDTO, "Job updated successfully", HttpStatus.OK);
+            return ApiResponse.success(newJobResponseDTO, "Job updated successfully", HttpStatus.OK);
+        } catch (Exception ex){
+            logger.error("An error occurred while updatomg job: {}", ex.getMessage());
+            return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping(value = "/{jobId}", produces = "application/json")
