@@ -5,8 +5,6 @@ import com.cjchika.jobber.job.dto.JobResponseDTO;
 import com.cjchika.jobber.job.dto.JobUpdateDTO;
 import com.cjchika.jobber.job.enums.Status;
 import com.cjchika.jobber.job.model.Job;
-import com.cjchika.jobber.job.service.JobService;
-import org.springframework.stereotype.Component;
 
 public class JobMapper {
 

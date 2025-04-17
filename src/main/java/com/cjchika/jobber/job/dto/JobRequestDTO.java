@@ -5,7 +5,6 @@ import com.cjchika.jobber.job.enums.Status;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
 
@@ -27,10 +26,6 @@ public class JobRequestDTO {
     private String location;
 
     @NotNull(message = "Job Type is required")
-//    @Pattern(regexp = "FULL_TIME|PART_TIME|CONTRACT|INTERNSHIP",
-//            flags = Pattern.Flag.CASE_INSENSITIVE,
-//            message = "Invalid job type")
-//    private String jobTypeString;
     private JobType jobType;
 
     private Status status;
