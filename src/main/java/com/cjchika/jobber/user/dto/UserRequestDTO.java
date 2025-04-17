@@ -26,6 +26,8 @@ public class UserRequestDTO {
 
     private UUID companyId;
 
+    private String resumeUrl;
+
     @Valid
     private CompanyDTO company;
 
@@ -105,6 +107,14 @@ public class UserRequestDTO {
 
     public void setCompany(CompanyDTO company) {
         this.company = company;
+    }
+
+    public String getResumeUrl() {
+        return resumeUrl;
+    }
+
+    public void setResumeUrl(String resumeUrl) {
+        this.resumeUrl = resumeUrl;
     }
 
     @Override

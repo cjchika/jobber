@@ -75,6 +75,7 @@ public class UserService {
     private UserRequestDTO createSafeUpdateDTO(User existingUser, UserUpdateDTO input) {
         UserRequestDTO safeDTO = new UserRequestDTO();
         safeDTO.setFullName(input.getFullName());
+        safeDTO.setResumeUrl(input.getResumeUrl());
 
         // Only allow companyId updates for employers
         if(existingUser.getRole().equals(Role.EMPLOYER)){

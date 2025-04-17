@@ -37,6 +37,9 @@ public class User implements UserDetails {
     @Column(name = "companyId")
     private UUID companyId;
 
+    @Column(name = "resume_url")
+    private String resumeUrl;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
@@ -98,6 +101,14 @@ public class User implements UserDetails {
 
     public void setCompanyId(UUID companyId) {
         this.companyId = companyId;
+    }
+
+    public String getResumeUrl() {
+        return resumeUrl;
+    }
+
+    public void setResumeUrl(String resumeUrl) {
+        this.resumeUrl = resumeUrl;
     }
 
     public LocalDateTime getCreatedAt() {

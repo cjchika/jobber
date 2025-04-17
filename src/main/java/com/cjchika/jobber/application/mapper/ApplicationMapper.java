@@ -22,17 +22,17 @@ public class ApplicationMapper {
         return  appResponseDTO;
     }
 
-    public static Application toModel(ApplicationRequestDTO appRequestDTO){
-        Application app = new Application();
-
-        app.setResumeUrl(appRequestDTO.getResumeUrl());
-        app.setCoverLetterUrl(appRequestDTO.getCoverLetterUrl());
-        app.setStatus(Status.SUBMITTED);
-        app.setUserId(appRequestDTO.getUserId());
-        app.setJobId(appRequestDTO.getJobId());
-
-        return app;
-    }
+//    public static Application toModel(ApplicationRequestDTO appRequestDTO){
+//        Application app = new Application();
+//
+//        app.setResumeUrl(appRequestDTO.getResumeUrl());
+//        app.setCoverLetterUrl(appRequestDTO.getCoverLetterUrl());
+//        app.setStatus(Status.SUBMITTED);
+//        app.setUserId(appRequestDTO.getUserId());
+//        app.setJobId(appRequestDTO.getJobId());
+//
+//        return app;
+//    }
 
     public static void updateModel(ApplicationUpdateDTO dto, Application app) {
         if (dto.getResumeUrl() != null) {

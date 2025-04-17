@@ -23,9 +23,11 @@ public class Application {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @NotNull(message = "User Id is required")
     @Column(name = "userId")
     private UUID userId;
 
+    @NotNull(message = "Job Id is required")
     @Column(name = "jobId")
     private UUID jobId;
 

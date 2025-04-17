@@ -10,6 +10,8 @@ public class UserUpdateDTO {
 
     private UUID companyId;
 
+    private String resumeUrl;
+
     public String getFullName() {
         return fullName;
     }
@@ -24,5 +26,13 @@ public class UserUpdateDTO {
 
     public void setCompanyId(UUID companyId) {
         this.companyId = companyId;
+    }
+
+    public String getResumeUrl() {
+        return resumeUrl;
+    }
+
+    public void setResumeUrl(String resumeUrl) {
+        this.resumeUrl = resumeUrl;
     }
 }

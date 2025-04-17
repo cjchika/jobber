@@ -1,17 +1,13 @@
 package com.cjchika.jobber.application.controller;
 
 import com.cjchika.jobber.api.ApiResponse;
-import com.cjchika.jobber.job.dto.JobFilterRequest;
-import com.cjchika.jobber.job.dto.JobRequestDTO;
-import com.cjchika.jobber.job.dto.JobResponseDTO;
-import com.cjchika.jobber.job.dto.JobUpdateDTO;
-import com.cjchika.jobber.job.enums.JobType;
-import com.cjchika.jobber.job.enums.Status;
-import com.cjchika.jobber.job.service.JobService;
+import com.cjchika.jobber.application.dto.ApplicationRequestDTO;
+import com.cjchika.jobber.application.dto.ApplicationResponseDTO;
+import com.cjchika.jobber.application.service.ApplicationService;
+import com.cjchika.jobber.application.enums.Status;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,107 +20,83 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/applications")
-@Tag(name = "Application", description = "Endpoints for jobs application")
+@RequestMapping("/api")
+@Tag(name = "Application", description = "Endpoints for job applications")
 public class ApplicationController {
 
     @Value("${jobber.baseUrl}")
     private String baseUrl;
-    private JobService jobService;
+    private final ApplicationService applicationService;
     private static final Logger logger = LoggerFactory.getLogger(com.cjchika.jobber.job.controller.JobController.class);
 
-    public ApplicationController(JobService jobService){
-        this.jobService = jobService;
+    public ApplicationController(ApplicationService applicationService){
+        this.applicationService = applicationService;
     }
 
-    @GetMapping(produces = "application/json")
-    @Operation(summary = "Get all jobs", description = "This endpoint retrieves jobs with optional filters")
-    public ResponseEntity<ApiResponse<List<JobResponseDTO>>> getFilteredJobs(
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) Double minSalary,
-            @RequestParam(required = false) Double maxSalary,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) JobType jobType,
-            @RequestParam(required = false) Status status
+    @PostMapping(value = "/applications", produces = "application/json")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @SecurityRequirement(name = "Authorization")
+    @Operation(summary = "Submit application", description = "Submit job application (User only)")
+    public ResponseEntity<ApiResponse<ApplicationResponseDTO>> postApplication(
+            @RequestBody ApplicationRequestDTO applicationRequestDTO) {
+        try {
+            logger.info("Posting application status");
+            ApplicationResponseDTO postApplication = applicationService.postApplication(applicationRequestDTO);
+            return ApiResponse.success(postApplication, "Job applied successfully", HttpStatus.OK);
+        } catch (Exception ex) {
+            logger.error("Error applying to this job application status: {}", ex.getMessage());
+            return ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping(value = "/users/{userId}/applications",produces = "application/json")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+    @SecurityRequirement(name = "Authorization")
+    @Operation(summary = "Get user's applications", description = "Retrieve all applications for a specific user")
+    public ResponseEntity<ApiResponse<List<ApplicationResponseDTO>>> getUserApplications(
+           @PathVariable UUID userId
     ){
         try {
-            logger.info("Fetching filtered jobs");
-
-            JobFilterRequest filters = new JobFilterRequest();
-            filters.setTitle(title);
-            filters.setMinSalary(minSalary);
-            filters.setMaxSalary(maxSalary);
-            filters.setLocation(location);
-            filters.setJobType(jobType);
-            filters.setStatus(status);
-
-            List<JobResponseDTO> jobs = jobService.getFilteredJobs(filters);
-
-            return ApiResponse.success(jobs, "Filtered jobs retrieved successfully", HttpStatus.OK);
+            logger.info("Fetching applications for user: {}", userId);
+            List<ApplicationResponseDTO> applications = applicationService.getUserApplications(userId);
+            return ApiResponse.success(applications, "Applications retrieved successfully", HttpStatus.OK);
         } catch (Exception ex){
-            logger.error("An error occurred while fetching jobs: {}", ex.getMessage());
-            return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error fetching user applications: {}", ex.getMessage());
+            return ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping(produces = "application/json")
+    @GetMapping(value = "/jobs/{jobId}/applications",produces = "application/json")
     @PreAuthorize("hasRole('ROLE_EMPLOYER')")
     @SecurityRequirement(name = "Authorization")
-    @Operation(summary = "Create job", description = "This endpoint creates a job.")
-    public ResponseEntity<ApiResponse<JobResponseDTO>> postJob(@Valid @RequestBody JobRequestDTO jobRequestDTO){
+    @Operation(summary = "Get job applications", description = "Retrieve all applications for a specific job (Employer only)")
+    public ResponseEntity<ApiResponse<List<ApplicationResponseDTO>>> getJobApplications(@PathVariable UUID jobId){
 
         try {
-            logger.info("Creating job");
-            JobResponseDTO newJobResponse = jobService.postJob(jobRequestDTO);
-
-            return ApiResponse.success(newJobResponse, "Job created successfully", HttpStatus.CREATED);
-        } catch (Exception ex){
-            logger.error("An error occurred while creating jobs: {}", ex.getMessage());
-            return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
-
-    @GetMapping(value = "/{jobId}", produces = "application/json")
-    @Operation(summary = "Get a job", description = "This endpoint retrieves a job from the system")
-    public ResponseEntity<ApiResponse<JobResponseDTO>> getJob(@PathVariable UUID jobId){
-        try {
-            logger.info("Getting job");
-            JobResponseDTO job = jobService.getJob(jobId);
-            return ApiResponse.success(job, "Job retrieved successfully", HttpStatus.OK);
-        } catch (Exception ex){
-            logger.error("An error occurred while getting job: {}", ex.getMessage());
-            return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.info("Fetching applications for job: {}", jobId);
+            List<ApplicationResponseDTO> applications = applicationService.getJobApplications(jobId);
+            return ApiResponse.success(applications, "Applications retrieved successfully", HttpStatus.OK);
+        } catch (Exception ex) {
+            logger.error("Error fetching job applications: {}", ex.getMessage());
+            return ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PutMapping(value = "/{jobId}", produces = "application/json")
+    @PatchMapping(value = "/applications/{id}", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_EMPLOYER')")
     @SecurityRequirement(name = "Authorization")
-    @Operation(
-            summary = "Update job",
-            description = "This endpoint updates an existing job.")
-    public ResponseEntity<ApiResponse<JobResponseDTO>> updateJob(@Valid @RequestBody JobUpdateDTO jobUpdateDTO, @PathVariable UUID jobId){
-
+    @Operation(summary = "Update application status", description = "Update the status of an application (Employer only)")
+    public ResponseEntity<ApiResponse<ApplicationResponseDTO>> updateApplicationStatus(
+            @PathVariable UUID id,
+            @RequestParam Status status) {
         try {
-            logger.info("Updating a job");
-            JobResponseDTO newJobResponseDTO = jobService.updateJob(jobUpdateDTO, jobId);
-
-            return ApiResponse.success(newJobResponseDTO, "Job updated successfully", HttpStatus.OK);
-        } catch (Exception ex){
-            logger.error("An error occurred while updatomg job: {}", ex.getMessage());
-            return ApiResponse.error( ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.info("Updating application status for: {}", id);
+            ApplicationResponseDTO updatedApplication = applicationService.updateApplicationStatus(id, status);
+            return ApiResponse.success(updatedApplication, "Application status updated successfully", HttpStatus.OK);
+        } catch (Exception ex) {
+            logger.error("Error updating application status: {}", ex.getMessage());
+            return ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @DeleteMapping(value = "/{jobId}", produces = "application/json")
-    @PreAuthorize("hasAnyRole('ROLE_EMPLOYER', 'ROLE_ADMIN')")
-    @SecurityRequirement(name = "Authorization")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(
-            summary = "Delete job",
-            description = "This endpoint deletes a job (only accessible by employer or admin).")
-    public void deleteJob(@Valid @PathVariable UUID jobId){
-        jobService.deleteJob(jobId);
     }
 }

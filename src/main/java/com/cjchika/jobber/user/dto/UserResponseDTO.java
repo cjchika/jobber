@@ -10,6 +10,7 @@ public class UserResponseDTO {
     private String email;
     private Role role;
     private UUID companyId;
+    private String resumeUrl;
 
     public String getId() {
         return id;
@@ -49,5 +50,13 @@ public class UserResponseDTO {
 
     public void setCompanyId(UUID companyId) {
         this.companyId = companyId;
+    }
+
+    public String getResumeUrl() {
+        return resumeUrl;
+    }
+
+    public void setResumeUrl(String resumeUrl) {
+        this.resumeUrl = resumeUrl;
     }
 }

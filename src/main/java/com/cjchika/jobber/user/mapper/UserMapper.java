@@ -60,6 +60,10 @@ public class UserMapper {
         if(dto.getFullName() != null && !dto.getFullName().isBlank()){
             user.setFullName(dto.getFullName());
         }
+//        if(dto.getResumeUrl() != null && !dto.getResumeUrl().isBlank()){
+//            user.setResumeUrl(dto.getResumeUrl());
+//        }
+        user.setResumeUrl(dto.getResumeUrl());
         user.setCompanyId(dto.getCompanyId());
     }
 }
