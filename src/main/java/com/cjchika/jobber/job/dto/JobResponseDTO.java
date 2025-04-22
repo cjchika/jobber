@@ -14,7 +14,7 @@ public class JobResponseDTO {
     private Double salaryMax;
     private JobType jobType;
     private Status status;
-    private UUID employerId;
+    private UUID companyId;
 
     public String getId() {
         return id;
@@ -24,12 +24,12 @@ public class JobResponseDTO {
         this.id = id;
     }
 
-    public UUID getEmployerId() {
-        return employerId;
+    public UUID getCompanyId() {
+        return companyId;
     }
 
-    public void setEmployerId(UUID employerId) {
-        this.employerId = employerId;
+    public void setCompanyId(UUID companyId) {
+        this.companyId = companyId;
     }
 
     public Status getStatus() {

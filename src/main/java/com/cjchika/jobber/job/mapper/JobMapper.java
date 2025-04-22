@@ -19,7 +19,7 @@ public class JobMapper {
         jobResponseDTO.setSalaryMax(job.getSalaryMax());
         jobResponseDTO.setJobType(job.getJobType());
         jobResponseDTO.setStatus(job.getStatus());
-        jobResponseDTO.setEmployerId(job.getEmployerId());
+        jobResponseDTO.setCompanyId(job.getCompanyId());
 
         return  jobResponseDTO;
     }
@@ -34,7 +34,7 @@ public class JobMapper {
         job.setSalaryMin(jobRequestDTO.getSalaryMin());
         job.setSalaryMax(jobRequestDTO.getSalaryMax());
         job.setStatus(Status.fromValue("ACTIVE"));
-        job.setEmployerId(jobRequestDTO.getEmployerId());
+        job.setCompanyId(jobRequestDTO.getCompanyId());
 
         return job;
     }

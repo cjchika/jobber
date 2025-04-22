@@ -80,7 +80,7 @@ public class ApplicationService {
                 .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));
 
         // Verify current user is the job owner
-        if(!job.getEmployerId().equals(currentUser.getId())){
+        if(!job.getCompanyId().equals(currentUser.getId())){
             throw new JobberException("Unauthorized access to applications", HttpStatus.FORBIDDEN);
         }
 
@@ -100,7 +100,7 @@ public class ApplicationService {
                 .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));
 
         // Verify the authenticated user owns the job
-        if(!job.getEmployerId().equals(currentUser.getId())){
+        if(!job.getCompanyId().equals(currentUser.getId())){
             throw new JobberException("Unauthorized to update application!", HttpStatus.FORBIDDEN);
         }
 

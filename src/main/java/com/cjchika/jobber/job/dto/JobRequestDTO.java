@@ -30,8 +30,8 @@ public class JobRequestDTO {
 
     private Status status;
 
-    @NotNull(message = "Employer Id is required")
-    private UUID employerId;
+    @NotNull(message = "Company Id is required")
+    private UUID companyId;
 
     public String getTitle() {
         return title;
@@ -41,12 +41,12 @@ public class JobRequestDTO {
         this.title = title;
     }
 
-    public UUID getEmployerId() {
-        return employerId;
+    public UUID getCompanyId() {
+        return companyId;
     }
 
-    public void setEmployerId(UUID employerId) {
-        this.employerId = employerId;
+    public void setCompanyId(UUID companyId) {
+        this.companyId = companyId;
     }
 
     public Status getStatus() {
@@ -107,7 +107,7 @@ public class JobRequestDTO {
                 ", location='" + location + '\'' +
                 ", jobType=" + jobType +
                 ", status=" + status +
-                ", employerId=" + employerId +
+                ", companyId=" + companyId +
                 '}';
     }
 }

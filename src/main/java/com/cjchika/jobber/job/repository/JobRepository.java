@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface JobRepository extends JpaRepository<Job, UUID> {
 //    Optional<Job> findById(UUID id);
 
-    List<Job> findByEmployerId(UUID companyId);
+    List<Job> findByCompanyId(UUID employerId);
 
     @Query("SELECT j FROM Job j WHERE " +
             "(:title IS NULL OR j.title LIKE %:title%) AND " +

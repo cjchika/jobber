@@ -35,13 +35,13 @@ public class JobService {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // 1. Verify the authenticated user matches employer in request
-        if(!jobRequestDTO.getEmployerId().equals(currentUser.getId())){
-            throw new JobberException("Unauthorized", HttpStatus.FORBIDDEN);
-        }
+//        if(!jobRequestDTO.getCompanyId().equals(currentUser.getId())){
+//            throw new JobberException("Unauthorized", HttpStatus.FORBIDDEN);
+//        }
 
         // 2. Find and validate employer
-         User employer = userRepository.findById(jobRequestDTO.getEmployerId())
-                    .orElseThrow(() -> new JobberException("Employer not found", HttpStatus.NOT_FOUND));
+         User employer = userRepository.findByCompanyId(jobRequestDTO.getCompanyId())
+                    .orElseThrow(() -> new JobberException("Company not found", HttpStatus.NOT_FOUND));
 
          if(!employer.getRole().equals(Role.EMPLOYER)){
              throw new JobberException("Only employers can post jobs", HttpStatus.FORBIDDEN);
@@ -78,13 +78,13 @@ public class JobService {
 
     public JobResponseDTO updateJob(JobUpdateDTO jobUpdateDTO, UUID jobId){
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
+
         // 1. Find the existing user by ID
         Job existingJob = jobRepository.findById(jobId)
                 .orElseThrow(() -> new JobberException("Job not found", HttpStatus.NOT_FOUND));
 
         // 2. Verify the authenticated user owns the job
-        if(!existingJob.getEmployerId().equals(currentUser.getId())){
+        if(!existingJob.getCompanyId().equals(currentUser.getId())){
             throw new JobberException("Unauthorized Access!", HttpStatus.FORBIDDEN);
         }
 
@@ -112,7 +112,7 @@ public class JobService {
 
         // 2. Check if current user is allowed to  delete the job
         boolean isAdmin = currentUser.getRole().equals(Role.ADMIN);
-        boolean isOwner = currentUser.getId().equals(job.getEmployerId());
+        boolean isOwner = currentUser.getId().equals(job.getCompanyId());
 
         if(!isAdmin && !isOwner){
             throw new JobberException("Unauthorized", HttpStatus.FORBIDDEN);

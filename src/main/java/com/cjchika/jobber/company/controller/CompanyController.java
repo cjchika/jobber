@@ -51,7 +51,7 @@ public class CompanyController {
 
     @GetMapping(value = "/{id}/jobs", produces = "application/json")
     @Operation(summary = "Get company jobs", description = "This endpoint retrieves all jobs posted by a company")
-    public ResponseEntity<ApiResponse<List<Job>>> getCompanyJobs(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<List<Job>>> getEmployerJobs(@PathVariable UUID id) {
         try {
             logger.info("Getting jobs for company ID: {}", id);
             List<Job> jobs = companyService.getJobsByCompany(id);
@@ -63,9 +63,9 @@ public class CompanyController {
     }
 
     @PostMapping(produces = "application/json")
-    @PreAuthorize("hasAnyRole('ROLE_EMPLOYER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @SecurityRequirement(name = "Authorization")
-    @Operation(summary = "Create company", description = "This endpoint creates a new company (Only Employer or Admin)")
+    @Operation(summary = "Create company", description = "This endpoint creates a new company (Only Admin)")
     public ResponseEntity<ApiResponse<CompanyResponseDTO>> postCompany(@Valid @RequestBody CompanyDTO companyDTO){
         try {
             logger.info("Creating new company");

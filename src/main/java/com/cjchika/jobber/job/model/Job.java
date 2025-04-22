@@ -38,8 +38,8 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "employerId")
-    private UUID employerId;
+    @Column(name = "companyId")
+    private UUID companyId;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -120,13 +120,21 @@ public class Job {
         this.status = status;
     }
 
-    public UUID getEmployerId() {
-        return employerId;
+    public UUID getCompanyId() {
+        return companyId;
     }
 
-    public void setEmployerId(UUID employerId) {
-        this.employerId = employerId;
+    public void setCompanyId(UUID companyId) {
+        this.companyId = companyId;
     }
+
+    //    public UUID getEmployerId() {
+//        return employerId;
+//    }
+//
+//    public void setEmployerId(UUID employerId) {
+//        this.employerId = employerId;
+//    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

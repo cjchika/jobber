@@ -31,8 +31,8 @@ public class CompanyService {
         this.jobRepository = jobRepository;
     }
 
-    public CompanyResponseDTO getCompany(UUID jobId){
-        Company company = companyRepository.findById(jobId)
+    public CompanyResponseDTO getCompany(UUID companyId){
+        Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new JobberException("Company not found", HttpStatus.NOT_FOUND));
 
         return CompanyMapper.toDTO(company);
@@ -80,8 +80,7 @@ public class CompanyService {
             throw new JobberException("Company not found", HttpStatus.NOT_FOUND);
         }
 
-        return jobRepository.findByEmployerId(companyId);
+        return jobRepository.findByCompanyId(companyId);
     }
-
 
 }
