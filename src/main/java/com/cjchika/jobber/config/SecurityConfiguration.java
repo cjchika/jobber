@@ -50,6 +50,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/companies/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/job-categories/**").permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/api/jobs/**").hasAnyRole("ADMIN", "EMPLOYER")
                         .requestMatchers(
                                 "/swagger-ui/**",
