@@ -1,11 +1,14 @@
 package com.cjchika.jobber.job.model;
 
+import com.cjchika.jobber.category.model.JobCategory;
 import com.cjchika.jobber.job.enums.JobType;
 import com.cjchika.jobber.job.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -45,6 +48,9 @@ public class Job {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<JobCategory> categories = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {
